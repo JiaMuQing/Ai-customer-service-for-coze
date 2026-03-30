@@ -1,0 +1,29 @@
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { IsString, MinLength } from 'class-validator';
+import { AuthService } from './auth.service';
+
+export class LoginDto {
+  @IsString()
+  username!: string;
+
+  @IsString()
+  @MinLength(1)
+  password!: string;
+}
+
+@Controller('auth')
+export class AuthController {
+  constructor(private readonly authService: AuthService) {}
+
+  @Post('login')
+  login(@Body() dto: LoginDto) {
+    return this.authService.login(dto.username, dto.password);
+  }
+
+  @Post('verify')
+  @UseGuards(AuthGuard('jwt'))
+  verify() {
+    return { ok: true };
+  }
+}

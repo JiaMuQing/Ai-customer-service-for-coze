@@ -1,0 +1,7 @@
+# 部署相关（nginx 配置、服务器脚本、部署文档等不提交）
+deploy/
+docs/deploy.md
+
+# 系统与编辑器
+.DS_Store
+*.log
