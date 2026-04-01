@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, watch } from 'vue';
+import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import { isAxiosError } from 'axios';
 import { api } from '@/api';
 import { ElMessage } from 'element-plus';
@@ -108,6 +108,29 @@ const input = ref('');
 const loading = ref(false);
 const scrollRef = ref<HTMLElement | null>(null);
 const bottomAnchor = ref<HTMLElement | null>(null);
+
+const previewVisible = ref(false);
+const previewUrl = ref('');
+const previewAlt = ref('');
+
+const previewTitle = computed(() => previewAlt.value || '图片预览');
+
+function onRichImageClick(ev: MouseEvent) {
+  const t = ev.target;
+  if (!t || !(t instanceof HTMLImageElement)) return;
+  if (!t.classList.contains('chat-img')) return;
+  ev.preventDefault();
+  const src = t.currentSrc || t.src;
+  if (!src) return;
+  previewUrl.value = src;
+  previewAlt.value = t.alt?.trim() || '';
+  previewVisible.value = true;
+}
+
+function onPreviewClosed() {
+  previewUrl.value = '';
+  previewAlt.value = '';
+}
 
 function scrollToBottomNow() {
   const wrap = scrollRef.value;
