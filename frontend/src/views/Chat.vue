@@ -55,7 +55,7 @@
 
     <el-dialog
       v-model="previewVisible"
-      :title="previewTitle"
+      :title="previewAlt || '图片预览'"
       width="min(96vw, 920px)"
       top="3vh"
       align-center
@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick, watch } from 'vue';
+import { ref, onMounted, nextTick, watch } from 'vue';
 import { isAxiosError } from 'axios';
 import { api } from '@/api';
 import { ElMessage } from 'element-plus';
@@ -112,8 +112,6 @@ const bottomAnchor = ref<HTMLElement | null>(null);
 const previewVisible = ref(false);
 const previewUrl = ref('');
 const previewAlt = ref('');
-
-const previewTitle = computed(() => previewAlt.value || '图片预览');
 
 function onRichImageClick(ev: MouseEvent) {
   const t = ev.target;
@@ -535,6 +533,12 @@ onMounted(() => {
   margin-top: 10px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgb(15 23 42 / 8%);
+  cursor: zoom-in;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bubble-rich :deep(.chat-img:hover) {
+  box-shadow: 0 4px 16px rgb(15 23 42 / 12%);
 }
 
 .bubble-rich :deep(br + .chat-img) {
@@ -645,5 +649,30 @@ onMounted(() => {
   height: 0;
   overflow: hidden;
   pointer-events: none;
+}
+</style>
+
+<!-- el-dialog teleports to body; keep preview layout unscoped -->
+<style>
+.chat-img-preview-dialog .el-dialog__body {
+  padding-top: 4px;
+}
+
+.chat-img-preview-dialog .img-preview-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+  overflow: auto;
+  max-height: min(85vh, 900px);
+}
+
+.chat-img-preview-dialog .img-preview-full {
+  max-width: 100%;
+  max-height: min(82vh, 860px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
 }
 </style>
